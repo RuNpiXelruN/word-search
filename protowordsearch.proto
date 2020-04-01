@@ -1,0 +1,19 @@
+syntax="proto3";
+
+package wordsearch;
+
+import "google/api/annotations.proto";
+
+message ListWordsRequest {}
+
+message ListWordsResponse {
+    string message = 1;
+}
+
+service WordSearch {
+    rpc ListSearchTerms (ListWordsRequest) returns (ListWordsResponse) {
+        option(google.api.http) = {
+            get: "/api/words",
+        };
+    }
+} 
