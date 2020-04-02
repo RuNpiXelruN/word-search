@@ -1,4 +1,4 @@
-package wordsearch
+package grpcserver
 
 import (
 	"context"
@@ -7,9 +7,15 @@ import (
 	"net"
 	"net/http"
 
+	wordsearch "github.com/RuNpiXelruN/word-search/proto"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"google.golang.org/grpc"
 )
+
+// Testt func
+func Testt() {
+	fmt.Println("hihi")
+}
 
 // Start func
 func (sc *SearchClient) Start() {
@@ -39,7 +45,7 @@ func (sc *SearchClient) StartGRPC() error {
 
 	grpcServer := grpc.NewServer()
 
-	RegisterWordSearchServer(grpcServer, sc)
+	wordsearch.RegisterWordSearchServer(grpcServer, sc)
 
 	grpcServer.Serve(lis)
 	return nil
@@ -59,7 +65,7 @@ func (sc *SearchClient) StartRest() error {
 	// default values will not print out.
 	mux := runtime.NewServeMux(runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{OrigName: true, EmitDefaults: true}))
 	opts := []grpc.DialOption{grpc.WithInsecure()}
-	err := RegisterWordSearchHandlerFromEndpoint(ctx, mux, ":8080", opts)
+	err := wordsearch.RegisterWordSearchHandlerFromEndpoint(ctx, mux, ":8080", opts)
 	if err != nil {
 		return err
 	}

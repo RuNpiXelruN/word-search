@@ -1,4 +1,4 @@
-package wordsearch
+package grpcserver
 
 import "sync"
 

@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "protowordsearch.proto",
+    "title": "proto/wordsearch.proto",
     "version": "version not set"
   },
   "consumes": [
@@ -64,7 +64,7 @@
       }
     },
     "/api/words/{word}": {
-      "put": {
+      "post": {
         "operationId": "UpdateSearchList",
         "responses": {
           "200": {
