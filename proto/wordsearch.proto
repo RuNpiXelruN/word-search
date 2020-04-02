@@ -43,7 +43,7 @@ message TopFiveResponse {
 service WordSearch {
     rpc SingleWordSearch (SingleWordSearchRequest) returns (SingleWordSearchResponse) {
         option(google.api.http) = {
-            get: "/api/words"            
+            get: "/api/words"        
         };
     }
 

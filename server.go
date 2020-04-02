@@ -6,38 +6,35 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"sync"
 
 	wordsearch "github.com/RuNpiXelruN/word-search/proto"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"google.golang.org/grpc"
 )
 
-// Testt func
-func Testt() {
-	fmt.Println("hihi")
-}
+var wg sync.WaitGroup
 
 // Start func
-func (sc *SearchClient) Start() {
-	fmt.Println("Hi from grpc package")
+func Start(wsc WordSearchService) {
+	fmt.Println("GRPC Wordsearch Server is running...")
 
-	sc.wg.Add(1)
+	wg.Add(1)
 	go func() {
-		log.Fatal(sc.StartGRPC())
-		sc.wg.Done()
+		log.Fatal(wsc.StartGRPC())
+		wg.Done()
 	}()
 
-	sc.wg.Add(1)
+	wg.Add(1)
 	go func() {
-		log.Fatal(sc.StartRest())
-		sc.wg.Done()
+		log.Fatal(wsc.StartRest())
+		wg.Done()
 	}()
-
-	sc.wg.Wait()
+	wg.Wait()
 }
 
 // StartGRPC func
-func (sc *SearchClient) StartGRPC() error {
+func (wsc *WordSearchClient) StartGRPC() error {
 	lis, err := net.Listen("tcp", "localhost:8080")
 	if err != nil {
 		return err
@@ -45,14 +42,14 @@ func (sc *SearchClient) StartGRPC() error {
 
 	grpcServer := grpc.NewServer()
 
-	wordsearch.RegisterWordSearchServer(grpcServer, sc)
+	wordsearch.RegisterWordSearchServer(grpcServer, wsc)
 
 	grpcServer.Serve(lis)
 	return nil
 }
 
 // StartRest func
-func (sc *SearchClient) StartRest() error {
+func (wsc *WordSearchClient) StartRest() error {
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()

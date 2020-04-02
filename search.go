@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	wordsearch "github.com/RuNpiXelruN/word-search/proto"
-	"github.com/y0ssar1an/q"
 )
 
 var searchList []*wordsearch.SearchItem
@@ -49,16 +48,18 @@ func init() {
 	}
 }
 
-func incrementCount(item *wordsearch.SearchItem) {
+// IncrementCount func
+func (wsc *WordSearchClient) IncrementCount(item *wordsearch.SearchItem) {
 	item.SearchCount++
 }
 
-func wordExists(searchTerm string, items []*wordsearch.SearchItem, increment bool) (exists bool) {
+// WordExists func
+func (wsc *WordSearchClient) WordExists(searchTerm string, items []*wordsearch.SearchItem, increment bool) (exists bool) {
 	exists = false
 	for _, item := range items {
 		if item.Name == searchTerm {
 			if increment {
-				incrementCount(item)
+				wsc.IncrementCount(item)
 			}
 			exists = true
 			break
@@ -69,11 +70,11 @@ func wordExists(searchTerm string, items []*wordsearch.SearchItem, increment boo
 }
 
 // SingleWordSearch func
-func (sc *SearchClient) SingleWordSearch(ctx context.Context, req *wordsearch.SingleWordSearchRequest) (*wordsearch.SingleWordSearchResponse, error) {
+func (wsc *WordSearchClient) SingleWordSearch(ctx context.Context, req *wordsearch.SingleWordSearchRequest) (*wordsearch.SingleWordSearchResponse, error) {
 	wordRaw := req.Word
 	word := strings.ToLower(wordRaw)
 	message := fmt.Sprintf("Sorry, '%v' cannot be found.", wordRaw)
-	exists := wordExists(word, searchList, true)
+	exists := wsc.WordExists(word, searchList, true)
 
 	if exists {
 		message = fmt.Sprintf("Yay, '%v' is one of our words.", wordRaw)
@@ -84,11 +85,11 @@ func (sc *SearchClient) SingleWordSearch(ctx context.Context, req *wordsearch.Si
 }
 
 // UpdateSearchList func
-func (sc *SearchClient) UpdateSearchList(ctx context.Context, req *wordsearch.UpdateSearchListRequest) (*wordsearch.UpdateSearchListResponse, error) {
+func (wsc *WordSearchClient) UpdateSearchList(ctx context.Context, req *wordsearch.UpdateSearchListRequest) (*wordsearch.UpdateSearchListResponse, error) {
 	wordRaw := req.Word
 	word := strings.ToLower(wordRaw)
 
-	exists := wordExists(word, searchList, false)
+	exists := wsc.WordExists(word, searchList, false)
 	if exists {
 		return &wordsearch.UpdateSearchListResponse{
 			Message:  fmt.Sprintf("Search term '%v', is already on the list.", wordRaw),
@@ -110,13 +111,13 @@ func (sc *SearchClient) UpdateSearchList(ctx context.Context, req *wordsearch.Up
 }
 
 // TopFiveSearchResults func
-func (sc *SearchClient) TopFiveSearchResults(ctx context.Context, req *wordsearch.TopFiveRequest) (*wordsearch.TopFiveResponse, error) {
+func (wsc *WordSearchClient) TopFiveSearchResults(ctx context.Context, req *wordsearch.TopFiveRequest) (*wordsearch.TopFiveResponse, error) {
 	sort.Slice(searchList, func(i, j int) bool {
 		return searchList[i].SearchCount > searchList[j].SearchCount
 	})
 
-	q.Q(searchList)
+	topList := searchList[:5]
 	return &wordsearch.TopFiveResponse{
-		TopFive: searchList,
+		TopFive: topList,
 	}, nil
 }
