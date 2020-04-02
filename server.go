@@ -15,7 +15,9 @@ import (
 
 var wg sync.WaitGroup
 
-// Start func
+// Start func is the entry point
+// to the word-search app. It accepts
+// the WordSearchService interface.
 func Start(wsc WordSearchService) {
 	fmt.Println("GRPC Wordsearch Server is running...")
 
@@ -33,7 +35,8 @@ func Start(wsc WordSearchService) {
 	wg.Wait()
 }
 
-// StartGRPC func
+// StartGRPC func starts our
+// GRPC server on port ':8080'
 func (wsc *WordSearchClient) StartGRPC() error {
 	lis, err := net.Listen("tcp", "localhost:8080")
 	if err != nil {
@@ -48,7 +51,9 @@ func (wsc *WordSearchClient) StartGRPC() error {
 	return nil
 }
 
-// StartRest func
+// StartRest func starts our Rest server on
+// port ':8090', listens for incoming requests
+// and forwards them onto our GRPC server
 func (wsc *WordSearchClient) StartRest() error {
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)

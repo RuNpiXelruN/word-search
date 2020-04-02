@@ -8,7 +8,8 @@ import (
 
 //go:generate moq -out mock_wordsearchservice.go . WordSearchService
 
-// WordSearchService type
+// WordSearchService type is a collection
+// of functions used within the word-search app.
 type WordSearchService interface {
 	SingleWordSearch(ctx context.Context, req *wordsearch.SingleWordSearchRequest) (*wordsearch.SingleWordSearchResponse, error)
 	UpdateSearchList(ctx context.Context, req *wordsearch.UpdateSearchListRequest) (*wordsearch.UpdateSearchListResponse, error)
@@ -19,10 +20,13 @@ type WordSearchService interface {
 	StartRest() error
 }
 
-// WordSearchClient type
+// WordSearchClient type implements the
+// WordSearchService interface.
 type WordSearchClient struct{}
 
 // NewWordSearchClient func
+// generates a pointer to a
+// WordSearchClient
 func NewWordSearchClient() *WordSearchClient {
 	return &WordSearchClient{}
 }

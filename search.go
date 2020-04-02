@@ -12,6 +12,9 @@ import (
 var searchList []*wordsearch.SearchItem
 
 func init() {
+
+	// Initialising our default
+	// set of words to be searched
 	searchList = []*wordsearch.SearchItem{
 		&wordsearch.SearchItem{
 			Name:        "hello",
@@ -48,12 +51,14 @@ func init() {
 	}
 }
 
-// IncrementCount func
+// IncrementCount func increments the
+// SearchCount value of a wordsearch.SearchItem
 func (wsc *WordSearchClient) IncrementCount(item *wordsearch.SearchItem) {
 	item.SearchCount++
 }
 
-// WordExists func
+// WordExists func determines if a word
+// exists in our slice of wordsearch.SearchItem
 func (wsc *WordSearchClient) WordExists(searchTerm string, items []*wordsearch.SearchItem, increment bool) (exists bool) {
 	exists = false
 	for _, item := range items {
@@ -69,7 +74,9 @@ func (wsc *WordSearchClient) WordExists(searchTerm string, items []*wordsearch.S
 	return exists
 }
 
-// SingleWordSearch func
+// SingleWordSearch func searches for a given
+// word and returns a message detailing whether
+// it was found within our slice of wordsearch.SearchItem
 func (wsc *WordSearchClient) SingleWordSearch(ctx context.Context, req *wordsearch.SingleWordSearchRequest) (*wordsearch.SingleWordSearchResponse, error) {
 	wordRaw := req.Word
 	word := strings.ToLower(wordRaw)
@@ -84,7 +91,9 @@ func (wsc *WordSearchClient) SingleWordSearch(ctx context.Context, req *wordsear
 	}, nil
 }
 
-// UpdateSearchList func
+// UpdateSearchList func updates our slice
+// of wordsearch.SearchItem if the given
+// word doens't already exist.
 func (wsc *WordSearchClient) UpdateSearchList(ctx context.Context, req *wordsearch.UpdateSearchListRequest) (*wordsearch.UpdateSearchListResponse, error) {
 	wordRaw := req.Word
 	word := strings.ToLower(wordRaw)
@@ -110,7 +119,10 @@ func (wsc *WordSearchClient) UpdateSearchList(ctx context.Context, req *wordsear
 	}, nil
 }
 
-// TopFiveSearchResults func
+// TopFiveSearchResults func returns the
+// top 5 searched words from our slice of
+// wordsearch.SearchItem, ordered by highest
+// SearchCount number.
 func (wsc *WordSearchClient) TopFiveSearchResults(ctx context.Context, req *wordsearch.TopFiveRequest) (*wordsearch.TopFiveResponse, error) {
 	sort.Slice(searchList, func(i, j int) bool {
 		return searchList[i].SearchCount > searchList[j].SearchCount
