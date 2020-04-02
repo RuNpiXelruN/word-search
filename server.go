@@ -1,26 +1,15 @@
 package wordsearch
 
 import (
-	context "context"
+	"context"
 	"fmt"
 	"log"
 	"net"
 	"net/http"
-	"sync"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	grpc "google.golang.org/grpc"
+	"google.golang.org/grpc"
 )
-
-// SearchClient type
-type SearchClient struct {
-	wg sync.WaitGroup
-}
-
-// NewSearchClient func
-func NewSearchClient() *SearchClient {
-	return &SearchClient{}
-}
 
 // Start func
 func (sc *SearchClient) Start() {
@@ -62,7 +51,13 @@ func (sc *SearchClient) StartRest() error {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	mux := runtime.NewServeMux()
+	// the below is required to json marshal default
+	// values, ie 0 for the starting search_count.
+	// protocol buffers has 'emitempty' harcoded into
+	// them and is a known behaviour they're looking
+	// at fixing. If runtime.NewServeMux() only is used,
+	// default values will not print out.
+	mux := runtime.NewServeMux(runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{OrigName: true, EmitDefaults: true}))
 	opts := []grpc.DialOption{grpc.WithInsecure()}
 	err := RegisterWordSearchHandlerFromEndpoint(ctx, mux, ":8080", opts)
 	if err != nil {
@@ -70,11 +65,4 @@ func (sc *SearchClient) StartRest() error {
 	}
 
 	return http.ListenAndServe(":8090", mux)
-}
-
-// ListSearchTerms func
-func (sc *SearchClient) ListSearchTerms(ctx context.Context, req *ListWordsRequest) (*ListWordsResponse, error) {
-	return &ListWordsResponse{
-		Message: fmt.Sprint("Hiii!!"),
-	}, nil
 }
