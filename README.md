@@ -30,7 +30,7 @@
  curl -X "POST" "http://localhost:8090/api/words/sawyer"
  ```
  
- ### Update word search list
+ ### Fetch top 5 most searched for words
  ```
  curl "http://localhost:8090/api/words/popular"
  ```
